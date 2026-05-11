@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">MiPlato</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="correo">Correo electrónico</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="nombre_completo">Nombre completo</string>
+    <string name="confirmar_contrasena">Confirmar contraseña</string>
+    <string name="error_campos_vacios">Por favor, completa todos los campos</string>
+    <string name="error_credenciales">Credenciales incorrectas</string>
+    <string name="error_registro">Error al crear la cuenta</string>
+    <string name="cerrar_sesion_msg">¿Deseas cerrar sesión?</string>
+    <string name="cerrar_sesion_desc">Tus datos seguirán guardados en la nube.</string>
+    <string name="calorias_totales">Calorías Totales</string>
+    <string name="macronutrientes">Macronutrientes</string>
+    <string name="proteina">Proteína</string>
+    <string name="carbohidratos">Carbohidratos</string>
+    <string name="grasas">Grasas</string>
+    <string name="no_hay_datos">Aún no hay datos para hoy</string>
+</resources>

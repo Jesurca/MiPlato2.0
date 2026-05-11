@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1098417875318",
+    "project_id": "miplato2",
+    "storage_bucket": "miplato2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098417875318:android:63ab53b09d1fe9c5e33257",
+        "android_client_info": {
+          "package_name": "com.miplato.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDLHqD8LN4BsWQZ1CFwUcRsyS3SV2R4xo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

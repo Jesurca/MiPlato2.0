@@ -1,0 +1,5 @@
+sdk.dir=C\\:\\Android\\Sdk
+SPOONACULAR_API_KEY=pega_tu_api_key
+FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+# Cliente web OAuth de Firebase (Autenticación > Método de acceso > Google > Web client ID)
+WEB_CLIENT_ID_GOOGLE=xxxxx.apps.googleusercontent.com

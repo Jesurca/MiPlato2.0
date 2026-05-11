@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MiPlato" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/verde_primario</item>
+        <item name="android:statusBarColor">@color/verde_primario</item>
+    </style>
+
+    <!-- Theme para la Splash Screen -->
+    <style name="Theme.MiPlato.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/verde_primario</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.MiPlato</item>
+    </style>
+</resources>
