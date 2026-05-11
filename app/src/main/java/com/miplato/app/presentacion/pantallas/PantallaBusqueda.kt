@@ -3,29 +3,34 @@
 package com.miplato.app.presentacion.pantallas
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -39,12 +44,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.miplato.app.core.EstadoUi
 import com.miplato.app.dominio.AlimentoSugerido
+import com.miplato.app.presentacion.theme.Mint
+import com.miplato.app.presentacion.theme.DarkSurfaceVariant
+import com.miplato.app.presentacion.theme.TextGray
+import com.miplato.app.presentacion.theme.OnDarkSurface
+import com.miplato.app.presentacion.componentes.MiPlatoBoton
+import com.miplato.app.presentacion.componentes.MiPlatoCampoTexto
+import com.miplato.app.presentacion.theme.DarkSurface
 import com.miplato.app.presentacion.viewmodels.DashboardViewModel
 import kotlinx.coroutines.launch
 
@@ -63,17 +77,18 @@ fun PantallaBusqueda(
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(anfitrionSnack) },
         topBar = {
             TopAppBar(
-                title = { Text("Buscar Alimentos") },
+                title = { Text("Buscar Alimentos", color = OnDarkSurface) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = OnDarkSurface)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
         }
@@ -82,40 +97,36 @@ fun PantallaBusqueda(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(relleno)
-                .padding(16.dp)
+                .padding(horizontal = 24.dp)
         ) {
-            OutlinedTextField(
-                value = consultaTexto,
+            Spacer(Modifier.height(16.dp))
+            
+            MiPlatoCampoTexto(
+                valor = consultaTexto,
                 onValueChange = { consultaTexto = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Ej: Manzana, Pollo...") },
-                label = { Text("Buscar alimento") },
-                shape = RoundedCornerShape(16.dp),
-                singleLine = true
+                label = "Búsqueda",
+                placeholder = "Ej: Manzana, Pollo...",
+                leadingIcon = Icons.Default.Search
             )
             
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(24.dp))
             
-            Button(
+            MiPlatoBoton(
+                texto = "BUSCAR",
                 onClick = { 
                     if (consultaTexto.isNotBlank()) {
                         modeloTablero.buscarAlimento(consultaTexto)
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text("Buscar")
-            }
+                }
+            )
             
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(32.dp))
 
             when (val muestra = estadoBusqueda) {
                 is EstadoUi.Cargando ->
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Mint)
+                    }
                 is EstadoUi.Error -> {
                     Text(
                         text = muestra.mensaje,
@@ -128,12 +139,17 @@ fun PantallaBusqueda(
                 }
                 is EstadoUi.Exito -> {
                     if (muestra.datos.isEmpty() && consultaTexto.isNotBlank()) {
-                        Text("No se encontraron resultados", modifier = Modifier.align(Alignment.CenterHorizontally))
+                        Text(
+                            "No se encontraron resultados", 
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = TextGray
+                        )
                     }
                     
                     LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.weight(1f)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(bottom = 24.dp)
                     ) {
                         items(muestra.datos) { alimento ->
                             TarjetaAlimentoBusqueda(
@@ -167,21 +183,31 @@ fun TarjetaAlimentoBusqueda(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .background(DarkSurface)
+            .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
-            Text(alimento.nombre, style = MaterialTheme.typography.titleMedium)
-            Text("${alimento.calorias} kcal | P: ${alimento.proteina}g | C: ${alimento.carbohidratos}g | G: ${alimento.grasas}g", 
-                 style = MaterialTheme.typography.bodySmall)
+            Text(
+                alimento.nombre, 
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = OnDarkSurface
+            )
+            Text(
+                "${alimento.calorias} kcal | P: ${alimento.proteina}g | C: ${alimento.carbohidratos}g | G: ${alimento.grasas}g", 
+                style = MaterialTheme.typography.bodySmall,
+                color = TextGray
+            )
         }
-        Button(
+        TextButton(
             onClick = alAgregar,
-            shape = RoundedCornerShape(12.dp)
+            colors = ButtonDefaults.textButtonColors(contentColor = Mint)
         ) {
-            Text("Añadir")
+            Text("AÑADIR", fontWeight = FontWeight.Bold)
         }
     }
 }

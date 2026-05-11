@@ -1,5 +1,6 @@
 package com.miplato.app.presentacion.viewmodels
 
+import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miplato.app.core.EstadoUi
@@ -97,8 +98,50 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun procesarImagenIa(rutaImagen: String) {
-        // Implementación simplificada o delegada a NutricionRepositorio
-        // Nota: NutricionRepositorio.reconocerAlimentoDesdeImagen requiere un Bitmap
+        viewModelScope.launch {
+            _estadoIa.value = EstadoUi.Cargando
+            
+            // 1. Cargar Bitmap
+            val bitmap = BitmapFactory.decodeFile(rutaImagen)
+            if (bitmap == null) {
+                _estadoIa.value = EstadoUi.Error("No se pudo cargar la imagen")
+                return@launch
+            }
+
+            // 2. Reconocer etiquetas
+            val resultadoEtiquetas = repositorioAlimentos.reconocerAlimentoDesdeImagen(bitmap)
+            
+            resultadoEtiquetas.fold(
+                onSuccess = { etiquetas ->
+                    if (etiquetas.isEmpty()) {
+                        _estadoIa.value = EstadoUi.Error("No se reconoció ningún alimento")
+                        return@fold
+                    }
+
+                    // 3. Buscar el primer término en Spoonacular para obtener macros
+                    val busqueda = repositorioAlimentos.buscarAlimentosSpoonacular(etiquetas.first())
+                    busqueda.fold(
+                        onSuccess = { lista ->
+                            if (lista.isEmpty()) {
+                                _estadoIa.value = EstadoUi.Exito(AlimentoSugerido(etiquetas.first(), 0, 0f, 0f, 0f))
+                            } else {
+                                val top = lista.first()
+                                _estadoIa.value = EstadoUi.Exito(
+                                    AlimentoSugerido(top.nombre, top.calorias, top.proteina, top.carbohidratos, top.grasas)
+                                )
+                            }
+                        },
+                        onFailure = {
+                            // Fallback a solo el nombre reconocido
+                            _estadoIa.value = EstadoUi.Exito(AlimentoSugerido(etiquetas.first(), 0, 0f, 0f, 0f))
+                        }
+                    )
+                },
+                onFailure = {
+                    _estadoIa.value = EstadoUi.Error("Error de IA: ${it.message}")
+                }
+            )
+        }
     }
 
     /** Reinicia el estado de pantalla tras salir para no arrastrar resultados entre cuentas. */

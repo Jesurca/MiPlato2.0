@@ -27,13 +27,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.compose.ui.text.font.FontWeight
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.miplato.app.BuildConfig
+import com.miplato.app.presentacion.componentes.MiPlatoBoton
+import com.miplato.app.presentacion.componentes.MiPlatoCampoTexto
 import com.miplato.app.presentacion.componentes.PantallaCarga
 import com.miplato.app.presentacion.navegacion.Rutas
 import com.miplato.app.presentacion.navegacion.navegarAlInicioTrasAutenticacion
+import com.miplato.app.presentacion.theme.Mint
+import com.miplato.app.presentacion.theme.OnDarkSurface
+import com.miplato.app.presentacion.theme.TextGray
 import com.miplato.app.presentacion.viewmodels.SesionViewModel
 
 @Composable
@@ -85,36 +91,41 @@ fun PantallaLogin(
     ) {
         Text(
             text = "MiPlato",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
+            style = MaterialTheme.typography.displayMedium,
+            fontWeight = FontWeight.Black,
+            color = Mint
         )
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "Tu nutrición inteligente",
+            style = MaterialTheme.typography.bodyLarge,
+            color = TextGray
+        )
+        
+        Spacer(modifier = Modifier.height(48.dp))
 
-        OutlinedTextField(
-            value = estado.correo,
+        MiPlatoCampoTexto(
+            valor = estado.correo,
             onValueChange = modeloSesion::actualizarCorreo,
-            label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(16.dp),
-            isError = estado.error.isNotBlank()
+            label = "Correo electrónico",
+            placeholder = "ejemplo@correo.com",
+            error = if (estado.error.contains("correo", ignoreCase = true)) estado.error else null
         )
         
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = estado.clave,
+        MiPlatoCampoTexto(
+            valor = estado.clave,
             onValueChange = modeloSesion::actualizarClave,
-            label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(16.dp),
-            visualTransformation = PasswordVisualTransformation(),
-            isError = estado.error.isNotBlank()
+            label = "Contraseña",
+            placeholder = "••••••••",
+            esPassword = true,
+            error = if (estado.error.contains("contraseña", ignoreCase = true) || estado.error.contains("clave", ignoreCase = true)) estado.error else null
         )
 
-        if (estado.error.isNotBlank()) {
+        if (estado.error.isNotBlank() && !estado.error.contains("correo", ignoreCase = true) && !estado.error.contains("contraseña", ignoreCase = true)) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = estado.error,
@@ -124,18 +135,13 @@ fun PantallaLogin(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
+        MiPlatoBoton(
+            texto = "INICIAR SESIÓN",
             onClick = modeloSesion::iniciarSesion,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            enabled = !estado.cargando,
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text("Iniciar Sesión")
-        }
+            cargando = estado.cargando
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -147,9 +153,10 @@ fun PantallaLogin(
                     lanzadorGoogle.launch(clienteGoogle.signInIntent)
                 }
             },
-            enabled = !estado.cargando
+            enabled = !estado.cargando,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Continuar con Google")
+            Text("CONTINUAR CON GOOGLE", color = OnDarkSurface, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -157,9 +164,9 @@ fun PantallaLogin(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("¿No tienes cuenta?")
+            Text("¿No tienes cuenta?", color = TextGray)
             TextButton(onClick = { navController.navigate(Rutas.Registro) }) {
-                Text("Regístrate aquí")
+                Text("Regístrate aquí", color = Mint, fontWeight = FontWeight.Bold)
             }
         }
     }

@@ -24,10 +24,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.miplato.app.presentacion.componentes.MiPlatoBoton
+import com.miplato.app.presentacion.componentes.MiPlatoCampoTexto
 import com.miplato.app.presentacion.componentes.PantallaCarga
 import com.miplato.app.presentacion.navegacion.navegarAlInicioTrasAutenticacion
+import com.miplato.app.presentacion.theme.Mint
+import com.miplato.app.presentacion.theme.OnDarkSurface
+import com.miplato.app.presentacion.theme.TextGray
 import com.miplato.app.presentacion.viewmodels.SesionViewModel
 
 @Composable
@@ -46,58 +52,57 @@ fun PantallaRegistro(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Registro",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
+            text = "Crear Cuenta",
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = FontWeight.Black,
+            color = Mint
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "Comienza tu viaje saludable hoy",
+            style = MaterialTheme.typography.bodyLarge,
+            color = TextGray
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(48.dp))
 
-        OutlinedTextField(
-            value = estado.nombre,
+        MiPlatoCampoTexto(
+            valor = estado.nombre,
             onValueChange = modeloSesion::actualizarNombre,
-            label = { Text("Nombre completo") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            isError = estado.error.isNotBlank()
+            label = "Nombre completo",
+            placeholder = "Juan Pérez"
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = estado.correo,
+        MiPlatoCampoTexto(
+            valor = estado.correo,
             onValueChange = modeloSesion::actualizarCorreo,
-            label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(16.dp),
-            isError = estado.error.isNotBlank()
+            label = "Correo electrónico",
+            placeholder = "ejemplo@correo.com"
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = estado.clave,
+        MiPlatoCampoTexto(
+            valor = estado.clave,
             onValueChange = modeloSesion::actualizarClave,
-            label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(16.dp),
-            visualTransformation = PasswordVisualTransformation(),
-            isError = estado.error.isNotBlank()
+            label = "Contraseña",
+            placeholder = "••••••••",
+            esPassword = true
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = confirmacion,
+        MiPlatoCampoTexto(
+            valor = confirmacion,
             onValueChange = { confirmacion = it },
-            label = { Text("Confirmar contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(16.dp),
-            visualTransformation = PasswordVisualTransformation(),
-            isError = estado.error.isNotBlank() && confirmacion != estado.clave
+            label = "Confirmar contraseña",
+            placeholder = "••••••••",
+            esPassword = true,
+            error = if (confirmacion.isNotBlank() && confirmacion != estado.clave) "Las contraseñas no coinciden" else null
         )
 
         if (estado.error.isNotBlank()) {
@@ -110,23 +115,19 @@ fun PantallaRegistro(
             )
         }
 
+        Spacer(modifier = Modifier.height(32.dp))
+
+        MiPlatoBoton(
+            texto = "REGISTRARME",
+            onClick = { modeloSesion.registrar(confirmacion) },
+            cargando = estado.cargando
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = { modeloSesion.registrar(confirmacion) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            enabled = !estado.cargando,
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text("Registrarme")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         TextButton(onClick = { navController.popBackStack() }) {
-            Text("Ya tengo cuenta, iniciar sesión")
+            Text("Ya tengo cuenta, ", color = TextGray)
+            Text("iniciar sesión", color = Mint, fontWeight = FontWeight.Bold)
         }
     }
 

@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 val VerdePrimario = Color(0xFF4CAF50)
 val VerdeOscuro = Color(0xFF388E3C)
 val VerdeClaro = Color(0xFFC8E6C9)
+val Mint = Color(0xFFE8F5E9)
+val DarkSurface = Color(0xFF121212)
 
 private val LightColorScheme = lightColorScheme(
     primary = VerdePrimario,
@@ -18,7 +20,19 @@ private val LightColorScheme = lightColorScheme(
     background = Color(0xFFF9F9F9),
     surface = Color.White,
     onPrimary = Color.White,
-    onSurface = Color.Black
+    onSurface = Color.Black,
+    onBackground = Color.Black
+)
+
+private val DarkColorScheme = darkColorScheme(
+    primary = VerdePrimario,
+    secondary = VerdeOscuro,
+    tertiary = VerdeClaro,
+    background = Color.Black,
+    surface = DarkSurface,
+    onPrimary = Color.White,
+    onSurface = Color.White,
+    onBackground = Color.White
 )
 
 val Shapes = Shapes(
@@ -32,7 +46,7 @@ fun MiPlatoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) darkColorScheme(primary = VerdePrimario) else LightColorScheme
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

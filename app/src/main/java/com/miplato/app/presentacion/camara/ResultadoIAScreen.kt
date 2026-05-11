@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.miplato.app.presentacion.busqueda.BusquedaViewModel
 import com.miplato.app.presentacion.busqueda.ItemAlimentoBusqueda
-import com.miplato.app.presentacion.componentes.VerdePrimario
+import com.miplato.app.presentacion.ui.theme.VerdePrimario
 import com.miplato.app.presentacion.util.EstadoUI
 
 @OptIn(ExperimentalMaterial3Api::class)

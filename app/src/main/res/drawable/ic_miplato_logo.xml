@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Camera Body -->
+    <path
+        android:strokeColor="@color/gris_logo"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M145,60 H125 L115,45 H85 L75,60 H55 C43.95,60 35,68.95 35,80 V140 C35,151.05 43.95,160 55,160 H145 C156.05,160 165,151.05 165,140 V80 C165,68.95 156.05,60 145,60 Z" />
+
+    <!-- Flash/Button -->
+    <path
+        android:fillColor="@color/gris_logo"
+        android:pathData="M150,75 A5,5 0 1 1 140,75 A5,5 0 1 1 150,75" />
+
+    <!-- Plate (Circular Center) -->
+    <path
+        android:fillColor="#90EE90"
+        android:pathData="M100,110 m-35,0 a35,35 0 1,0 70,0 a35,35 0 1,0 -70,0" />
+
+    <!-- Fork on the plate -->
+    <path
+        android:fillColor="@color/gris_logo"
+        android:pathData="M95,90 H105 V105 H95 Z M93,85 V95 M97,85 V95 M101,85 V95 M105,85 V95 M98,105 V130 H102 V105 Z" />
+
+    <!-- Outer Plate Ring -->
+    <path
+        android:strokeColor="@color/gris_logo"
+        android:strokeWidth="6"
+        android:pathData="M100,110 m-35,0 a35,35 0 1,0 70,0 a35,35 0 1,0 -70,0" />
+
+</vector>

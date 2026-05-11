@@ -1,8 +1,13 @@
 package com.miplato.app.presentacion.navegacion
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,7 +32,16 @@ fun NavGraphMiPlato(
     navController: NavHostController,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
+    val estaListo by mainViewModel.estaListo.collectAsState()
     val estaLogueado by mainViewModel.estaLogueado.collectAsState()
+
+    if (!estaListo) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     val startDestination = if (estaLogueado) Destino.Home.ruta else Destino.Login.ruta
 
     NavHost(

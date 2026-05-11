@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.miplato.app.presentacion.componentes.VerdePrimario
+import com.miplato.app.presentacion.ui.theme.VerdePrimario
 import com.miplato.app.presentacion.util.EstadoUI
 
 @OptIn(ExperimentalMaterial3Api::class)

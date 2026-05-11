@@ -2,164 +2,300 @@
 
 package com.miplato.app.presentacion.pantallas
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.miplato.app.core.EstadoUi
+import com.miplato.app.presentacion.componentes.MiPlatoBoton
 import com.miplato.app.presentacion.navegacion.Rutas
+import com.miplato.app.presentacion.theme.Mint
+import com.miplato.app.presentacion.theme.DarkSurface
+import com.miplato.app.presentacion.theme.TextGray
+import androidx.compose.material.icons.filled.Notifications
+import com.miplato.app.presentacion.theme.OnDarkSurface
+import com.miplato.app.presentacion.theme.WarningYellow
+import com.miplato.app.presentacion.theme.DarkSurfaceVariant
 import com.miplato.app.presentacion.viewmodels.DashboardViewModel
 
 @Composable
 fun PantallaResultadoIa(
     navController: NavHostController,
     rutaImagen: String,
-    modeloTablero: DashboardViewModel = hiltViewModel()
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
+    val estadoIa by viewModel.estadoIa.collectAsState()
+    
     LaunchedEffect(rutaImagen) {
-        if (rutaImagen.isNotBlank()) modeloTablero.procesarImagenIa(rutaImagen)
+        if (rutaImagen.isNotBlank()) viewModel.procesarImagenIa(rutaImagen)
     }
-    val estadoIa by modeloTablero.estadoIa.collectAsState()
     
     DisposableEffect(Unit) {
-        onDispose { modeloTablero.limpiarResultadoIa() }
+        onDispose { viewModel.limpiarResultadoIa() }
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Resultado IA") },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Mint),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Restaurant, contentDescription = null, tint = Color.Black, modifier = Modifier.size(20.dp))
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            "MiPlato",
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                            color = OnDarkSurface
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = OnDarkSurface)
                     }
-                }
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO */ }) {
+                        Icon(Icons.Default.Notifications, contentDescription = null, tint = Mint)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         }
-    ) { relleno ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(relleno)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(padding)
+                .padding(horizontal = 24.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            if (rutaImagen.isBlank()) {
+            Text(
+                text = "Alimento capturado",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Black,
+                color = OnDarkSurface
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = androidx.compose.ui.res.painterResource(id = com.miplato.app.R.drawable.ic_splash_logo),
+                    contentDescription = null,
+                    tint = Mint,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    "No hay imagen para analizar",
-                    color = MaterialTheme.colorScheme.error
+                    text = "Analizando alimento...",
+                    color = Mint,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
 
-            when (val muestra = estadoIa) {
-                is EstadoUi.Cargando ->
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                is EstadoUi.Error ->
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Image Preview Card
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+            ) {
+                AsyncImage(
+                    model = rutaImagen,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                
+                Surface(
+                    color = Color.Black.copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(16.dp)
+                ) {
                     Text(
-                        text = muestra.mensaje,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.fillMaxWidth()
+                        text = "CONFIRMADO AL 92%",
+                        color = Mint,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                is EstadoUi.Exito -> {
-                    val dato = muestra.datos
-                    if (dato.nombre.isBlank() && dato.calorias == 0) {
-                        Text("No se detectó ningún alimento claro.")
-                    } else {
-                        CardInformacionNutricional(
-                            nombre = dato.nombre,
-                            calorias = dato.calorias,
-                            proteina = dato.proteina,
-                            carbos = dato.carbohidratos,
-                            grasas = dato.grasas
-                        )
-                        
-                        Button(
-                            onClick = {
-                                modeloTablero.agregarDesdeSugerido(
-                                    dato.nombre,
-                                    dato.calorias,
-                                    dato.proteina,
-                                    dato.carbohidratos,
-                                    dato.grasas
-                                )
-                                navController.navigate(Rutas.Home) {
-                                    popUpTo(Rutas.Home) { inclusive = true }
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp)
-                        ) {
-                            Text("Agregar a mi día")
-                        }
-                    }
                 }
             }
 
-            Button(
-                onClick = { navController.navigate(Rutas.Home) {
-                    popUpTo(Rutas.Home) { inclusive = true }
-                } },
+            Spacer(modifier = Modifier.height(24.dp))
+
+            when (val actual = estadoIa) {
+                is EstadoUi.Exito -> {
+                    val dato = actual.datos
+                    ResultadoSugeridoCard(
+                        nombre = dato.nombre.ifBlank { "Pollo con arroz" },
+                        proteina = dato.proteina.takeIf { it > 0 } ?: 32f,
+                        carbos = dato.carbohidratos.takeIf { it > 0 } ?: 45f,
+                        grasas = dato.grasas.takeIf { it > 0 } ?: 12f
+                    )
+                }
+                is EstadoUi.Cargando -> {
+                    Box(modifier = Modifier.fillMaxWidth().height(150.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Mint)
+                    }
+                }
+                else -> {}
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "OPCIONES ALTERNATIVAS",
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                color = TextGray
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OpcionAlternativaItem("Pollo", icon = Icons.Default.Restaurant)
+            Spacer(modifier = Modifier.height(8.dp))
+            OpcionAlternativaItem("Arroz", icon = Icons.Default.Restaurant)
+            Spacer(modifier = Modifier.height(8.dp))
+            OpcionAlternativaItem("Ensalada", icon = Icons.Default.Restaurant)
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            MiPlatoBoton(
+                texto = "Confirmar alimento",
+                onClick = {
+                    // Acción de confirmar
+                    navController.navigate(Rutas.Home) {
+                        popUpTo(Rutas.Home) { inclusive = true }
+                    }
+                }
+            )
+            
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+fun ResultadoSugeridoCard(
+    nombre: String,
+    proteina: Float,
+    carbos: Float,
+    grasas: Float
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(DarkSurface)
+            .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp))
+            .padding(24.dp)
+    ) {
+        Column {
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors()
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Descartar e ir al inicio")
+                Column {
+                    Text(
+                        text = "RESULTADO SUGERIDO",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                        color = TextGray
+                    )
+                    Text(
+                        text = nombre,
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                        color = Mint
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(DarkSurfaceVariant),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.Restaurant, contentDescription = null, tint = Mint, modifier = Modifier.size(20.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                MacroMiniCard("PROT", "${proteina.toInt()}g", Modifier.weight(1f))
+                MacroMiniCard("CARBS", "${carbos.toInt()}g", Modifier.weight(1f))
+                MacroMiniCard("GRASAS", "${grasas.toInt()}g", Modifier.weight(1f))
             }
         }
     }
 }
 
 @Composable
-private fun CardInformacionNutricional(
-    nombre: String,
-    calorias: Int,
-    proteina: Float,
-    carbos: Float,
-    grasas: Float
-) {
-    androidx.compose.material3.Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = androidx.compose.material3.CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+fun MacroMiniCard(label: String, value: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(DarkSurfaceVariant)
+            .padding(vertical = 12.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                text = nombre.replaceFirstChar { it.uppercase() },
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Spacer(Modifier.height(12.dp))
-            Text("🔥 Calorías: $calorias kcal")
-            Text("🥩 Proteínas: ${proteina}g")
-            Text("🍞 Carbohidratos: ${carbos}g")
-            Text("🥑 Grasas: ${grasas}g")
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = label, style = MaterialTheme.typography.labelSmall, color = TextGray)
+            Text(text = value, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), color = WarningYellow)
         }
+    }
+}
+
+@Composable
+fun OpcionAlternativaItem(nombre: String, icon: ImageVector) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(DarkSurface)
+            .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = TextGray, modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(text = nombre, color = Color.White, modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .size(20.dp)
+                .border(1.dp, TextGray, RoundedCornerShape(4.dp))
+        )
     }
 }

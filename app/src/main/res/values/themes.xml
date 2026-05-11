@@ -7,8 +7,8 @@
 
     <!-- Theme para la Splash Screen -->
     <style name="Theme.MiPlato.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/verde_primario</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="windowSplashScreenBackground">@color/background_splash</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_miplato_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.MiPlato</item>
     </style>
 </resources>

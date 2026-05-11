@@ -23,7 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.miplato.app.presentacion.componentes.VerdePrimario
+import com.miplato.app.presentacion.theme.Mint
+import com.miplato.app.presentacion.theme.DarkSurfaceVariant
+import com.miplato.app.presentacion.theme.TextGray
+import com.miplato.app.presentacion.theme.OnDarkSurface
+import com.miplato.app.presentacion.theme.ErrorRed
+import com.miplato.app.presentacion.componentes.MiPlatoBoton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,33 +53,38 @@ fun PerfilScreen(
     if (mostrarDialogo) {
         AlertDialog(
             onDismissRequest = { mostrarDialogo = false },
-            title = { Text("¿Deseas cerrar sesión?") },
-            text = { Text("Tendrás que volver a ingresar tus credenciales para acceder a tus datos.") },
+            title = { Text("¿Deseas cerrar sesión?", color = OnDarkSurface) },
+            text = { Text("Tendrás que volver a ingresar tus credenciales para acceder a tus datos.", color = TextGray) },
             confirmButton = {
                 TextButton(onClick = {
                     mostrarDialogo = false
                     viewModel.cerrarSesion(onCerrarSesion)
                 }) {
-                    Text("Confirmar", color = MaterialTheme.colorScheme.error)
+                    Text("Confirmar", color = ErrorRed, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { mostrarDialogo = false }) {
-                    Text("Cancelar")
+                    Text("Cancelar", color = OnDarkSurface)
                 }
-            }
+            },
+            containerColor = DarkSurfaceVariant
         )
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Mi Perfil") },
+                title = { Text("Mi Perfil", color = OnDarkSurface) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás", tint = OnDarkSurface)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { padding ->
@@ -87,9 +97,9 @@ fun PerfilScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(140.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .background(DarkSurfaceVariant)
                     .clickable { launcher.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
@@ -104,16 +114,16 @@ fun PerfilScreen(
                     Icon(
                         Icons.Default.Person,
                         contentDescription = null,
-                        modifier = Modifier.size(60.dp),
-                        tint = VerdePrimario
+                        modifier = Modifier.size(70.dp),
+                        tint = Mint
                     )
                 }
                 
                 if (estaCargando) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(120.dp),
-                        color = VerdePrimario,
-                        strokeWidth = 2.dp
+                        modifier = Modifier.size(140.dp),
+                        color = Mint,
+                        strokeWidth = 3.dp
                     )
                 }
 
@@ -122,40 +132,42 @@ fun PerfilScreen(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(4.dp)
-                        .size(32.dp)
+                        .size(36.dp)
                         .clip(CircleShape)
-                        .background(VerdePrimario),
+                        .background(Mint),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         Icons.Default.CameraAlt,
                         contentDescription = "Cambiar foto",
-                        modifier = Modifier.size(16.dp),
-                        tint = Color.White
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.Black
                     )
                 }
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             
-            Text(text = nombre, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text(text = correo, color = Color.Gray)
+            Text(
+                text = nombre, 
+                fontSize = 24.sp, 
+                fontWeight = FontWeight.Bold,
+                color = OnDarkSurface
+            )
+            Text(
+                text = correo, 
+                color = TextGray,
+                style = MaterialTheme.typography.bodyLarge
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Button(
+            MiPlatoBoton(
+                texto = "Cerrar Sesión",
                 onClick = { mostrarDialogo = true },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFEBEE), 
-                    contentColor = Color.Red
-                ),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Cerrar Sesión")
-            }
+                color = ErrorRed.copy(alpha = 0.1f),
+                contentColor = ErrorRed
+            )
         }
     }
 }

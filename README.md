@@ -35,7 +35,7 @@ La aplicación sigue los principios de **Clean Architecture** y las recomendacio
 
 ## ✒️ Autor
 **Jesús David Urbiñez Caselles**
-- [LinkedIn](https://www.linkedin.com/in/jes%C3%BAs-david-urbi%C3%B1ez-caselles-31b315217/)
+- [LinkedIn](https://www.linkedin.com/in/jes%C3%BAs-david-urbi%C3%B1ez-caselles-a2ba633b3/)
 
 ---
 *Este proyecto está en constante evolución siguiendo las mejores prácticas de desarrollo Android moderno.*

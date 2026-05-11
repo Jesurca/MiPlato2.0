@@ -16,9 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.miplato.app.dominio.Alimento
+import com.miplato.app.presentacion.theme.Mint
+import com.miplato.app.presentacion.theme.DarkSurfaceVariant
+import com.miplato.app.presentacion.theme.TextGray
+import com.miplato.app.presentacion.theme.OnDarkSurface
+import com.miplato.app.presentacion.componentes.MiPlatoBoton
+import com.miplato.app.presentacion.componentes.MiPlatoCampoTexto
 import com.miplato.app.presentacion.componentes.ComponenteError
 import com.miplato.app.presentacion.componentes.EstadoVacio
-import com.miplato.app.presentacion.componentes.VerdePrimario
 import com.miplato.app.presentacion.util.EstadoUI
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,49 +37,62 @@ fun BusquedaScreen(
     val estadoBusqueda by viewModel.estadoBusqueda.collectAsState()
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
                     TextField(
                         value = query,
                         onValueChange = { query = it },
-                        placeholder = { Text("Buscar alimento...") },
+                        placeholder = { Text("Buscar alimento...", color = TextGray) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Mint,
+                            focusedTextColor = OnDarkSurface,
+                            unfocusedTextColor = OnDarkSurface
                         ),
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Mint) },
                         singleLine = true
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás", tint = OnDarkSurface)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            Button(
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+        ) {
+            MiPlatoBoton(
+                texto = "Buscar en Spoonacular",
                 onClick = { viewModel.buscarAlimentos(query) },
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = VerdePrimario)
-            ) {
-                Text("Buscar en Spoonacular")
-            }
+                modifier = Modifier.padding(16.dp)
+            )
 
             when (val estado = estadoBusqueda) {
                 is EstadoUI.Cargando -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = VerdePrimario)
+                        CircularProgressIndicator(color = Mint)
                     }
                 }
                 is EstadoUI.Exito -> {
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 16.dp)
+                    ) {
                         items(estado.datos) { alimento ->
                             ItemAlimentoBusqueda(
                                 alimento = alimento,
@@ -117,14 +135,26 @@ fun BusquedaScreen(
 @Composable
 fun ItemAlimentoBusqueda(alimento: Alimento, onClick: () -> Unit) {
     ListItem(
-        headlineContent = { Text(alimento.nombre, fontWeight = FontWeight.Bold) },
-        supportingContent = { Text("${alimento.calorias} kcal | P: ${alimento.proteina}g G: ${alimento.grasas}g") },
+        headlineContent = { Text(alimento.nombre, fontWeight = FontWeight.Bold, color = OnDarkSurface) },
+        supportingContent = { 
+            Text(
+                "${alimento.calorias} kcal | P: ${alimento.proteina}g G: ${alimento.grasas}g",
+                color = TextGray
+            ) 
+        },
         trailingContent = {
             TextButton(onClick = onClick) {
-                Text("Agregar", color = VerdePrimario)
+                Text("Agregar", color = Mint, fontWeight = FontWeight.Bold)
             }
         },
+        colors = ListItemDefaults.colors(
+            containerColor = Color.Transparent
+        ),
         modifier = Modifier.clickable { onClick() }
     )
-    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
+    HorizontalDivider(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        thickness = 0.5.dp,
+        color = DarkSurfaceVariant
+    )
 }

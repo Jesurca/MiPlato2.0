@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="verde_primario">#4CAF50</color>
-    <color name="verde_oscuro">#388E3C</color>
-    <color name="verde_claro">#C8E6C9</color>
+    <color name="verde_secundario">#81C784</color>
+    <color name="gris_logo">#70757A</color>
+    <color name="background_splash">#F0F4F8</color>
     <color name="blanco">#FFFFFF</color>
     <color name="negro">#000000</color>
     <color name="gris_suave">#F5F5F5</color>

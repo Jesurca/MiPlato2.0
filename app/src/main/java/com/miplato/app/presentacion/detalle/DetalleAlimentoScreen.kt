@@ -1,6 +1,7 @@
 package com.miplato.app.presentacion.detalle
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -14,7 +15,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.miplato.app.dominio.Alimento
 import com.miplato.app.presentacion.componentes.MiPlatoBoton
-import com.miplato.app.presentacion.componentes.VerdePrimario
+import com.miplato.app.presentacion.theme.Mint
+import com.miplato.app.presentacion.theme.DarkSurface
+import com.miplato.app.presentacion.theme.DarkSurfaceVariant
+import com.miplato.app.presentacion.theme.TextGray
+import com.miplato.app.presentacion.theme.OnDarkSurface
+import com.miplato.app.presentacion.theme.WarningYellow
 import com.miplato.app.presentacion.util.EstadoUI
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,21 +33,25 @@ fun DetalleAlimentoScreen(
     val estadoAlimento by viewModel.estadoAlimento.collectAsState()
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Detalle del Alimento") },
+                title = { Text("Detalle del Alimento", color = OnDarkSurface) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás", tint = OnDarkSurface)
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize()) {
             when (val estado = estadoAlimento) {
                 is EstadoUI.Cargando -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = VerdePrimario)
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = Mint)
                 }
                 is EstadoUI.Exito -> {
                     ContenidoDetalle(
@@ -76,24 +86,26 @@ fun ContenidoDetalle(alimento: Alimento, onAgregar: () -> Unit) {
     ) {
         Text(
             text = alimento.nombre,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            color = VerdePrimario
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Black,
+            color = Mint
         )
         
         Spacer(modifier = Modifier.height(32.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = DarkSurface)
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                InfoNutricionalRow("Calorías", "${alimento.calorias} kcal")
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                InfoNutricionalRow("Proteínas", "${alimento.proteina}g")
-                InfoNutricionalRow("Carbohidratos", "${alimento.carbohidratos}g")
-                InfoNutricionalRow("Grasas", "${alimento.grasas}g")
+                InfoNutricionalRow("Calorías", "${alimento.calorias} kcal", colorValor = Mint)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = DarkSurfaceVariant)
+                InfoNutricionalRow("Proteínas", "${alimento.proteina}g", colorValor = WarningYellow)
+                Spacer(modifier = Modifier.height(8.dp))
+                InfoNutricionalRow("Carbohidratos", "${alimento.carbohidratos}g", colorValor = WarningYellow)
+                Spacer(modifier = Modifier.height(8.dp))
+                InfoNutricionalRow("Grasas", "${alimento.grasas}g", colorValor = WarningYellow)
             }
         }
 
@@ -107,12 +119,13 @@ fun ContenidoDetalle(alimento: Alimento, onAgregar: () -> Unit) {
 }
 
 @Composable
-fun InfoNutricionalRow(label: String, valor: String) {
+fun InfoNutricionalRow(label: String, valor: String, colorValor: Color = OnDarkSurface) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodyLarge)
-        Text(text = valor, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+        Text(text = label, style = MaterialTheme.typography.bodyLarge, color = TextGray)
+        Text(text = valor, style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), color = colorValor)
     }
 }
